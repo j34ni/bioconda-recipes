@@ -1,0 +1,47 @@
+{% set version = "6.3.2" %}
+{% set build = 0 %}
+
+package:
+  name: rocm-hip
+  version: {{ version }}
+
+build:
+  number: {{ build }}
+  string: h{{ PKG_HASH }}_{{ build }}
+  skip: true  # [win or osx]
+  run_exports:
+    - {{ pin_compatible('rocm-hip', max_pin='x.x.x') }}
+
+source:
+  url: https://github.com/ROCm/HIP/archive/refs/tags/rocm-{{ version }}.tar.gz
+  sha256: 2832e21d75369f87beee767949177a93ac113710afae6b73da5548c0047962ec
+
+requirements:
+  build:
+    - cmake
+    - ninja
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - rocm-llvm {{ version }}
+  host:
+    - rocm-core {{ version }}
+    - rocm-device-libs {{ version }}
+    - rocr-runtime {{ version }}
+  run:
+    - rocm-core {{ version }}
+    - rocm-device-libs {{ version }}
+    - rocr-runtime {{ version }}
+
+test:
+  commands:
+    - hipcc --version
+
+about:
+  home: https://github.com/ROCm/HIP
+  license: MIT
+  license_file: LICENSE.TXT
+  summary: ROCm HIP (Heterogeneous-compute Interface for Portability) provides a C++ programming environment for AMD GPUs.
+
+extra:
+  recipe-maintainers:
+    - j34n
