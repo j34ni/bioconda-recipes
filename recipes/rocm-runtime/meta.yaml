@@ -1,0 +1,47 @@
+{% set version = "6.3.2" %}
+{% set build = 0 %}
+
+package:
+  name: rocm-runtime
+  version: {{ version }}
+
+build:
+  number: {{ build }}
+  string: h{{ PKG_HASH }}_{{ build }}
+  skip: true  # [win or osx]
+  run_exports:
+    - {{ pin_compatible('rocm-runtime', max_pin='x.x.x') }}
+
+source:
+  git_url: https://github.com/ROCm/ROCR-Runtime.git
+  git_rev: rocm-{{ version }}
+
+requirements:
+  build:
+    - cmake
+    - ninja
+    - pkgconfig
+  host:
+    - elfutils
+    - libdrm
+    - libnuma
+    - rocm-core {{ version }}
+    - rocm-device-libs {{ version }}
+    - rocm-llvm {{ version }}
+
+test:
+  commands:
+    - test -f $PREFIX/lib/libhsa-runtime64.so
+    - test -f $PREFIX/lib/libhsakmt.a
+    - test -f $PREFIX/include/hsa/hsa.h
+    - test -f $PREFIX/include/hsa/hsa_ext_finalize.h
+
+about:
+  home: https://github.com/ROCm/ROCR-Runtime
+  license: NCSA
+  license_file: LICENSE
+  summary: ROCm HSA Runtime and Support Libraries.
+
+extra:
+  recipe-maintainers:
+    - j34n
