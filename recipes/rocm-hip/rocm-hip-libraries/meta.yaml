@@ -2,7 +2,7 @@
 {% set build = 0 %}
 
 package:
-  name: rocm-hip
+  name: rocm-hip-libraries
   version: {{ version }}
 
 build:
@@ -10,11 +10,7 @@ build:
   string: h{{ PKG_HASH }}_{{ build }}
   skip: true  # [win or osx]
   run_exports:
-    - {{ pin_compatible('rocm-hip', max_pin='x.x.x') }}
-  script_env:
-    - HIP_COMMON_DIR=$SRC_DIR/hipamd
-    - HIPCC_BIN_DIR=$PREFIX/bin
-    - HIP_PLATFORM=amd
+    - {{ pin_compatible('rocm-hip-libraries', max_pin='x.x.x') }}
 
 source:
   url: https://github.com/ROCm/clr/archive/refs/tags/rocm-{{ version }}.tar.gz
@@ -22,21 +18,17 @@ source:
 
 requirements:
   build:
-    - cmake >=3.16.8
+    - cmake
     - ninja
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
-    - rocm-core {{ version }}
-    - rocm-device-libs {{ version }}
     - rocm-llvm {{ version }}
   host:
     - rocm-core {{ version }}
     - rocm-device-libs {{ version }}
-    - rocm-llvm {{ version }}
   run:
     - rocm-core {{ version }}
     - rocm-device-libs {{ version }}
-    - rocm-llvm {{ version }}
 
 test:
   commands:
