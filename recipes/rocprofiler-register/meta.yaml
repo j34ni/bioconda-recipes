@@ -1,0 +1,41 @@
+{% set version = "6.3.2" %}
+{% set build = 0 %}
+
+package:
+  name: rocprofiler-register
+  version: {{ version }}
+
+source:
+  git_url: https://github.com/ROCm/rocprofiler-register.git
+  git_rev: rocm-{{ version }}
+
+build:
+  number: {{ build }}
+  string: h{{ PKG_HASH }}_{{ build }}
+  skip: true  # [win or osx]
+  run_exports:
+    - {{ pin_compatible('rocprofiler-register', max_pin='x.x.x') }}
+
+requirements:
+  build:
+    - cmake
+    - ninja
+    - {{ compiler('c') }} 
+
+test:
+  commands:
+    - test -f $PREFIX/lib/librocprofiler-register.so*
+
+about:
+  home: https://github.com/ROCm/rocprofiler-register
+  license: MIT
+  license_family: MIT
+  license_file: LICENSE
+  summary: ROCm profiling registration library
+  description: |
+    Provides a library for registering profiling callbacks in the ROCm ecosystem,
+    used by HIP and other runtimes for instrumentation.
+
+extra:
+  recipe-maintainers:
+    - j34n
