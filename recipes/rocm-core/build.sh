@@ -6,11 +6,12 @@ mkdir -p build
 
 cd build
 
-cmake -DCMAKE_INSTALL_PREFIX="$PREFIX" \
-      -DROCM_VERSION="$PKG_VERSION" \
-      -DBUILD_DOCS=OFF \
-      ..
+cmake .. \
+  -G Ninja \
+  -DCMAKE_INSTALL_PREFIX="$PREFIX" \
+  -DROCM_VERSION="$PKG_VERSION" \
+  -DBUILD_DOCS=OFF
 
-make -j$(nproc)
+ninja -j$(nproc)
 
-make install
+ninja install
