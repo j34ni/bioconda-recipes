@@ -2,7 +2,7 @@
 {% set build = 0 %}
 
 package:
-  name: rocm-runtime
+  name: rocr-runtime
   version: {{ version }}
 
 build:
@@ -10,7 +10,7 @@ build:
   string: h{{ PKG_HASH }}_{{ build }}
   skip: true  # [win or osx]
   run_exports:
-    - {{ pin_compatible('rocm-runtime', max_pin='x.x.x') }}
+    - {{ pin_compatible('rocr-runtime', max_pin='x.x.x') }}
 
 source:
   git_url: https://github.com/ROCm/ROCR-Runtime.git
