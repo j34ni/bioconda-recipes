@@ -20,11 +20,11 @@ requirements:
   build:
     - cmake
     - ninja
-    - {{ compiler('c') }} 
+    - rocm-llvm {{ version }}
 
 test:
   commands:
-    - test -f $PREFIX/lib/librocprofiler-register.so*
+    - test -f $PREFIX/lib/librocprofiler-register.so
 
 about:
   home: https://github.com/ROCm/rocprofiler-register
