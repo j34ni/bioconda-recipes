@@ -25,11 +25,13 @@ requirements:
   host:
     - rocm-core {{ version }}
     - rocm-device-libs {{ version }}
+    - rocm-hip {{ version }}
     - rocm-llvm-tools {{ version }}
 
 test:
   commands:
-    - echo "No tests for now"
+    - hipconfig --full
+    - rocminfo
 
 about:
   home: https://github.com/ROCm/clr
