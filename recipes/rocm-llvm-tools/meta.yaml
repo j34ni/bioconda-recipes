@@ -1,0 +1,50 @@
+{% set version = "6.3.2" %}
+{% set build = 0 %}
+
+package:
+  name: rocm-llvm-tools
+  version: {{ version }}
+
+build:
+  number: {{ build }}
+  string: h{{ PKG_HASH }}_{{ build }}
+  skip: true  # [win or osx]
+  run_exports:
+    - {{ pin_compatible('rocm-llvm-tools', max_pin='x.x.x') }}
+
+source:
+  git_url: https://github.com/ROCm/llvm-project.git
+  git_rev: rocm-{{ version }}
+
+requirements:
+  build:
+    - cmake
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - libxml2
+    - ninja
+    - pkgconfig
+    - python >=3.8
+  host:
+    - rocm-core {{ version }}
+    - zstd
+
+test:
+  commands:
+    - clang --version
+    - clang --print-targets | grep amdgcn
+
+about:
+  home: https://github.com/ROCm/llvm-project
+  license: NCSA
+  license_file: LICENSE
+  summary: LLVM toolchain for ROCm, including hipcc for HIP compilation
+  description: |
+    This package provides the ROCm-tuned LLVM toolchain, including hipcc,
+    for compiling HIP and AMDGPU code on ROCm platforms. It is used for GPU
+    programming on AMD Instinct accelerators like MI250/MI300, part of the ROCm
+    ecosystem.
+
+extra:
+  recipe-maintainers:
+    - j34ni
