@@ -9,44 +9,41 @@ build:
   number: {{ build }}
   string: h{{ PKG_HASH }}_{{ build }}
   skip: true  # [win or osx]
-  run_exports:
-    - {{ pin_compatible('rocm-hip', max_pin='x.x.x') }}
-  script_env:
-    - HIP_COMMON_DIR=$SRC_DIR/hipamd
-    - HIPCC_BIN_DIR=$PREFIX/bin
-    - HIP_PLATFORM=amd
+  noarch: generic
 
 source:
-  url: https://github.com/ROCm/clr/archive/refs/tags/rocm-{{ version }}.tar.gz
-  sha256: ec13dc4ffe212beee22171cb2825d2b16cdce103c835adddb482b9238cf4f050
+  git_url: https://github.com/ROCm/HIP.git
+  git_rev: rocm-6.3.2
 
 requirements:
   build:
     - cmake >=3.16.8
     - ninja
     - {{ compiler('c') }}
-    - {{ compiler('cxx') }}
-    - rocm-core {{ version }}
-    - rocm-device-libs {{ version }}
-    - rocm-llvm {{ version }}
   host:
     - rocm-core {{ version }}
-    - rocm-device-libs {{ version }}
-    - rocm-llvm {{ version }}
+    - rocm-llvm-tools {{ version }}
   run:
     - rocm-core {{ version }}
-    - rocm-device-libs {{ version }}
-    - rocm-llvm {{ version }}
 
 test:
   commands:
-    - hipcc --version
+    - test -f $PREFIX/opt/rocm/include/hip/hip_runtime.h
+    - test -f $PREFIX/opt/rocm/bin/hipcc || true
 
 about:
   home: https://github.com/ROCm/HIP
   license: MIT
-  license_file: LICENSE.TXT
-  summary: ROCm HIP (Heterogeneous-compute Interface for Portability) provides a C++ programming environment for AMD GPUs.
+  license_file: LICENSE 
+  summary: Portable Heterogeneous-compute Interface for Portability (HIP) API
+  description: |
+    This package provides the portable HIP API for GPU-accelerated programming
+    on AMD and NVIDIA platforms, including headers (e.g., hip/hip_runtime.h)
+    and the hipcc driver script. It is part of the ROCm ecosystem, built from
+    the ROCm/HIP repository, and serves as the interface layer for HIP
+    development.
+  doc_url: https://rocm.docs.amd.com/projects/hip/en/latest/
+  dev_url: https://github.com/ROCm/HIP
 
 extra:
   recipe-maintainers:

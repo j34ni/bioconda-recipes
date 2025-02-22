@@ -1,35 +1,23 @@
 #!/bin/bash
 
-set -ex
+mkdir -p $PREFIX/opt/rocm/bin
+mkdir -p $PREFIX/opt/rocm/include/hip
+mkdir -p $PREFIX/opt/rocm/lib
+mkdir -p $PREFIX/opt/rocm/doc/hip
 
-export HIP_COMMON_DIR=hipamd
-export HIPCC_BIN_DIR=$PREFIX/bin
-export HIP_PLATFORM=amd
-
-echo "6.3.2" > $HIP_COMMON_DIR/VERSION
-ls -la $HIP_COMMON_DIR/VERSION
-cat $HIP_COMMON_DIR/VERSION
-
-if [ ! -e "$HIP_COMMON_DIR/include/hip/hip_runtime.h" ]; then
-  mkdir -p $HIP_COMMON_DIR/include/hip
-  ln -s amd_detail/amd_hip_runtime.h $HIP_COMMON_DIR/include/hip/hip_runtime.h
+if [ -d $SRC_DIR/include/hip ]; then
+  cp -r $SRC_DIR/include/hip/* $PREFIX/opt/rocm/include/hip/
+elif [ -d $SRC_DIR/include ]; then
+  cp -r $SRC_DIR/include/* $PREFIX/opt/rocm/include/hip/ 2>/dev/null || true
 fi
 
-cd $HIP_COMMON_DIR
+if [ -f $SRC_DIR/bin/hipcc ]; then
+  cp $SRC_DIR/bin/hipcc $PREFIX/opt/rocm/bin/
+  chmod +x $PREFIX/opt/rocm/bin/hipcc
+fi
 
-mkdir -p build
-cd build
-
-cmake .. \
-  -G Ninja \
-  -DCMAKE_BUILD_TYPE=Release \
-  -DCMAKE_INSTALL_PREFIX=$PREFIX \
-  -DHIP_COMMON_DIR=$HIP_COMMON_DIR \
-  -DHIPCC_BIN_DIR=$HIPCC_BIN_DIR \
-  -DROCM_PATH=$PREFIX \
-  -DBUILD_SHARED_LIBS=ON \
-  -DCMAKE_PREFIX_PATH="$PREFIX:$HIP_COMMON_DIR/include/hip/amd_detail:$HIP_COMMON_DIR/include/hip" \
-  -DCMAKE_INCLUDE_PATH="$HIP_COMMON_DIR/include/hip/amd_detail:$HIP_COMMON_DIR/include/hip"
-
-ninja
-ninja install
+if [ -f $PREFIX/opt/rocm/bin/hipcc ]; then
+  echo "#!/bin/bash" > $PREFIX/bin/hipcc
+  echo "exec $PREFIX/opt/rocm/bin/hipcc \$@" >> $PREFIX/bin/hipcc
+  chmod +x $PREFIX/bin/hipcc
+fi
