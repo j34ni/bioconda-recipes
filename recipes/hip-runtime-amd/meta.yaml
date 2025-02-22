@@ -1,0 +1,49 @@
+{% set version = "6.3.2" %}
+{% set build = 0 %}
+
+package:
+  name: rocm-clr
+  version: {{ version }}
+
+build:
+  number: {{ build }}
+  string: h{{ PKG_HASH }}_{{ build }}
+  skip: true  # [win or osx]
+  run_exports:
+    - {{ pin_compatible('rocm-clr', max_pin='x.x.x') }}
+
+source:
+  git_url: https://github.com/ROCm/clr
+  git_rev: rocm-6.3.2
+
+requirements:
+  build:
+    - cmake
+    - {{ compiler('c') }}
+    - ninja
+    - python >=3.8
+  host:
+    - rocm-core {{ version }}
+    - rocm-device-libs {{ version }}
+    - rocm-llvm-tools {{ version }}
+
+test:
+  commands:
+    - echo "No tests for now"
+
+about:
+  home: https://github.com/ROCm/clr
+  license: MIT
+  license_file: LICENSE
+  summary: HIP runtime for AMD GPUs, part of AMD Compute Language Runtime (CLR)
+  description: |
+    This package provides the HIP runtime library (libamdhip64.so) for AMD GPUs,
+    enabling GPU-accelerated computing using the HIP programming model. It is
+    part of the AMD Compute Language Runtime (CLR) and is built from the
+    ROCm/clr repository, specifically the hipamd component.
+  doc_url: https://rocm.docs.amd.com/projects/hip/en/latest/
+  dev_url: https://github.com/ROCm/clr
+
+extra:
+  recipe-maintainers:
+    - j34ni
