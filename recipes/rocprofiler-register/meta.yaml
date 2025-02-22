@@ -19,8 +19,9 @@ build:
 requirements:
   build:
     - cmake
+    - {{ compiler('c') }}
     - ninja
-    - rocm-llvm {{ version }}
+    - rocm-llvm-tools {{ version }}
 
 test:
   commands:
