@@ -1,23 +1,33 @@
 #!/bin/bash
+set -ex
 
-mkdir -p $PREFIX/opt/rocm/bin
-mkdir -p $PREFIX/opt/rocm/include/hip
-mkdir -p $PREFIX/opt/rocm/lib
-mkdir -p $PREFIX/opt/rocm/doc/hip
+export CC=$(basename "$CC")
+export CXX=$(basename "$CXX")
 
-if [ -d $SRC_DIR/include/hip ]; then
-  cp -r $SRC_DIR/include/hip/* $PREFIX/opt/rocm/include/hip/
-elif [ -d $SRC_DIR/include ]; then
-  cp -r $SRC_DIR/include/* $PREFIX/opt/rocm/include/hip/ 2>/dev/null || true
-fi
+export CLR_DIR=$SRC_DIR/clr
+export HIP_DIR=$SRC_DIR/hip
 
-if [ -f $SRC_DIR/bin/hipcc ]; then
-  cp $SRC_DIR/bin/hipcc $PREFIX/opt/rocm/bin/
-  chmod +x $PREFIX/opt/rocm/bin/hipcc
-fi
+export LD_LIBRARY_PATH=$PREFIX/lib:$LD_LIBRARY_PATH
 
-if [ -f $PREFIX/opt/rocm/bin/hipcc ]; then
-  echo "#!/bin/bash" > $PREFIX/bin/hipcc
-  echo "exec $PREFIX/opt/rocm/bin/hipcc \$@" >> $PREFIX/bin/hipcc
-  chmod +x $PREFIX/bin/hipcc
-fi
+mkdir -p $HIP_DIR/build
+
+cd $CLR_DIR
+
+mkdir build
+cd build
+
+cmake -G Ninja \
+      -DCMAKE_INSTALL_PREFIX=$PREFIX \
+      -DHIP_COMMON_DIR=$HIP_DIR \
+      -DHIP_PLATFORM=amd \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DHIP_CATCH_TEST=0 \
+      -DCLR_BUILD_HIP=ON \
+      -DCLR_BUILD_OCL=OFF \
+      -DCMAKE_C_COMPILER=$CC \
+      -DCMAKE_CXX_COMPILER=$CXX \
+      -DHIPCC_BUILD_DIR=$HIP_DIR/build \
+      ..
+
+ninja -j$(nproc)
+ninja install
