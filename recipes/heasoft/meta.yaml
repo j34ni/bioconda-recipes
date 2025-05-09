@@ -1,0 +1,86 @@
+{% set version = "6.35.1" %}
+{% set checklib_version = "1.16" %}
+
+package:
+  name: heasoft
+  version: {{ version }}
+
+source:
+  - url: https://heasarc.gsfc.nasa.gov/FTP/software/lheasoft/lheasoft{{ version }}/heasoft-{{ version }}src.tar.gz
+    sha256: 60515214c01dbf3bea13fce27b5a2335f0be051172c745922cfe4c0be442bbbb
+    folder: heasoft
+  - url: https://cpan.metacpan.org/authors/id/M/MA/MATTN/Devel-CheckLib-{{ checklib_version }}.tar.gz
+    sha256: 869d38c258e646dcef676609f0dd7ca90f085f56cf6fd7001b019a5d5b831fca
+    folder: checklib
+   
+build:
+  number: 0
+  skip: true  # [win or osx]  # Skip Windows and macOS due to X11 and build complexity
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - {{ compiler('fortran') }}
+    - binutils
+    - file 
+    - libgcc 
+    - libtool  
+    - make
+    - perl
+    - pkg-config
+  host:
+    - astropy
+    - astropy-iers-data 
+    - libpng
+    - matplotlib-base
+    - ncurses
+    - numpy
+    - pip
+    - python
+    - readline
+    - scipy
+    - xorg-inputproto
+    - xorg-kbproto
+    - xorg-libx11
+    - xorg-libxau
+    - xorg-libxdmcp
+    - xorg-libxext
+    - xorg-libxt
+    - xorg-util-macros
+    - xorg-xextproto
+    - xorg-xf86vidmodeproto
+    - xorg-xproto
+    - zlib
+  run:
+    - astropy
+    - astropy-iers-data
+    - {{ pin_compatible('libpng') }}
+    - matplotlib-base
+    - {{ pin_compatible('ncurses') }}
+    - {{ pin_compatible('numpy') }}
+    - python
+    - {{ pin_compatible('readline') }}
+    - scipy
+    - {{ pin_compatible('xorg-libx11') }}
+    - {{ pin_compatible('xorg-libxext') }}
+    - {{ pin_compatible('xorg-libxt') }}
+    - {{ pin_compatible('zlib') }}
+test:
+  commands:
+    - test -f $PREFIX/bin/fhelp
+    - bash -c "ls $PREFIX/x86_64-pc-linux-gnu*/headas-init.sh"
+
+about:
+  home: https://heasarc.gsfc.nasa.gov/lheasoft/
+  license: Clear BSD License
+  license_file: LICENSE
+  summary: NASA High Energy Astrophysics Software (HEAsoft)
+  description: |
+    HEAsoft is a unified release of FTOOLS and XANADU software packages
+    for high energy astrophysics data analysis, including tools like XSPEC.
+  doc_url: https://heasarc.gsfc.nasa.gov/docs/software/heasoft/
+
+extra:
+  recipe-maintainers:
+    - j34ni
