@@ -25,6 +25,7 @@ requirements:
     - binutils
     - file 
     - libgcc 
+    - libgcrypt-devel
     - libtool  
     - make
     - perl
@@ -33,6 +34,7 @@ requirements:
     - astropy
     - astropy-iers-data 
     - libpng
+    - libcurl
     - matplotlib-base
     - ncurses
     - numpy
@@ -56,6 +58,7 @@ requirements:
     - astropy
     - astropy-iers-data
     - {{ pin_compatible('libpng') }}
+    - {{ pin_compatible('libcurl') }}
     - matplotlib-base
     - {{ pin_compatible('ncurses') }}
     - {{ pin_compatible('numpy') }}

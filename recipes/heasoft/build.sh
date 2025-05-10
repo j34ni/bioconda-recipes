@@ -28,6 +28,9 @@ export SCIPY_INCLUDE=$(python -c "import scipy; print(scipy.__path__[0])")
 export MATPLOTLIB_INCLUDE=$(python -c "import matplotlib; print(matplotlib.__path__[0])")
 export PYTHON_INCLUDE=$(python -c "import sysconfig; print(sysconfig.get_path('include'))")
 
+# Explicitly disable parallel builds
+export MAKEFLAGS="-j1"
+
 cd heasoft/BUILD_DIR
 
 # Set important environment variables with the Python includes
@@ -45,6 +48,6 @@ export PERL5LIB="${PREFIX}/lib/perl5/vendor_perl:${PREFIX}/lib/perl5:${PERL5LIB}
 # Configure with proper X11 paths - following NASA's recommendations
 ./configure --prefix="${PREFIX}" \
             --x-includes="${PREFIX}/include" \
-            --x-libraries="${PREFIX}/lib" 
-make
+            --x-libraries="${PREFIX}/lib"
+make -j1
 make install
