@@ -33,7 +33,7 @@ export ESMF_CXXCOMPILER=mpicxx
 export ESMF_DIR=$(pwd)/esme_esmf
 export ESMF_NETCDF=nc-config
 export ESMF_PNETCDF=pnetcdf-config
-export ESMF_LAPACK_LIBS=-lopenblas \
+export ESMF_LAPACK_LIBS=-lopenblas
 export ESMF_LAPACK_LIBPATH="${PREFIX}"/lib
 export ESMF_F90COMPILEOPTS="-fallow-argument-mismatch"
 export ESMF_CXXCOMPILEOPTS="$ESMF_CXXCOMPILEOPTS -include cstdint"
@@ -44,10 +44,17 @@ make -j ${CPU_COUNT}
 
 make install
 
+# Fix hardcoded build-time paths in esmf.mk
+ESMFMK="${PREFIX}/lib/esmf.mk"
+
+# Replace SRC_DIR/esme_esmf (ESMF_DIR at build time) with PREFIX
+sed -i "s|${ESMF_DIR}|${PREFIX}|g" "${ESMFMK}"
+
+# Remove hardcoded build-env GCC lib paths (not needed at runtime)
+sed -i "s| -[LW][^ ]*conda-bld[^ ]*||g" "${ESMFMK}"
+
 echo "_________________________________________________________"
-
 find ${PREFIX} -name esmf.mk
-
 echo "_________________________________________________________"
 
 export ESMFMKFILE=${PREFIX}/lib/esmf.mk
